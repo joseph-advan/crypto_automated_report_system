@@ -1,0 +1,38 @@
+# 忽略 Python 相關的快取檔案
+__pycache__/
+*.pyc
+
+# 忽略虛擬環境資料夾 (如果您有使用)
+.venv/
+venv/
+env/
+
+# --- 極度重要的安全設定 ---
+
+# 1. 絕對禁止上傳 .env 檔案 (包含您的 API 金鑰)
+.env
+*.env
+
+# 2. 絕對禁止上傳 data/input 中的原始報告
+# (只保留一個 .gitkeep 檔案來維持資料夾結構)
+data/input/*
+!data/input/.gitkeep
+
+# 3. 禁止上傳 data/output 中的結果 (包含機密 mapping 和 PDF)
+data/output/*
+!data/output/.gitkeep
+
+# 4. 禁止上傳 data/temp 中的暫存檔案
+data/temp/*
+!data/temp/.gitkeep
+
+# 忽略 Mac/Windows 系統檔案
+.DS_Store
+Thumbs.db
+
+# --- 忽略您自訂的資料夾 ---
+# 忽略 "文件內容" 資料夾及其所有內容
+00docs/
+
+# 忽略 "測試用" 資料夾及其所有內容
+00testing/

@@ -1,0 +1,21 @@
+{
+  "basic_info": {
+    "report_name": "...",
+    "case_type": "...",
+    "report_date": "..."
+  },
+  "wallet_summary": {
+    "total_count": 0,
+    "error_count": 0
+  },
+  "wallet_error_table": [
+    {
+      "id": 0,
+      "address": "...",
+      "result": "..."
+    }
+  ],
+  "txid_error_table": [],
+  "flow_check_table": [],
+  "suggested_trace_table": []
+}
