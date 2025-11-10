@@ -23,6 +23,10 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 INPUT_DIR = os.path.join(BASE_DIR, "data", "input")
 OUTPUT_DIR = os.path.join(BASE_DIR, "data", "output")
 TEMP_DIR = os.path.join(BASE_DIR, "data", "temp")
+API_DATA_DIR = os.path.join(BASE_DIR, "data", "api_data")
+PRE_CHECK_REPORT_PATH = os.path.join(OUTPUT_DIR, "pre_check_report.json")
+ADDRESS_CHECK_TRUTH_PATH = os.path.join(API_DATA_DIR, "addressChech200OK.json")
+
 # [新] Prompt 檔案的路徑
 PROMPTS_DIR = os.path.join(BASE_DIR, "prompts")
 

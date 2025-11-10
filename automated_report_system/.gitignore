@@ -26,6 +26,10 @@ data/output/*
 data/temp/*
 !data/temp/.gitkeep
 
+
+data/api_data/*
+!data/api_data/.gitkeep
+
 # 忽略 Mac/Windows 系統檔案
 .DS_Store
 Thumbs.db

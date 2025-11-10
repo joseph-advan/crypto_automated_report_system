@@ -2,7 +2,7 @@ import docx
 import re
 import os
 import json
-
+from . import address_validator  # <-- [新加入的行]
 # (這裡的程式碼與您 v3.1 腳本幾乎相同，只是封裝成一個類別)
 
 class FileProcessor:
@@ -41,20 +41,60 @@ class FileProcessor:
         self.mapping_data = {
             "ADDR_TRON": {}, "ADDR_ETH": {}, "ADDR_BTC": {}, "TXID_GENERIC": {}
         }
+        self.formatting_errors = []
 
     def _get_unique_id(self, match_obj, prefix):
         original_string = match_obj.group(0)
         
-        # [新] 清理字串，移除所有空白和換行
+        # 步驟 1: 清理字串 (不變)
+        # 移除所有空白字元 (包含 space 和 newline)，用於 "驗證" 和 "mapping key"
         canonical_string = re.sub(r'\s+', '', original_string)
         
+        # 步驟 2: [新] 檢查 "錯誤"
+        # 根據您的新規則：只將 "空格" (space) 視為錯誤
+        # "換行" (\n) 是可接受的，不視為錯誤。
+        has_formatting_error = " " in original_string  # <-- [關鍵修改]
+        
+        # 步驟 3: 呼叫驗證器 (不變)
+        is_valid = False
+        if "BTC" in prefix:
+            is_valid = address_validator.is_valid_btc(canonical_string)
+        elif "TRON" in prefix:
+            is_valid = address_validator.is_valid_tron(canonical_string)
+        elif "ETH" in prefix:
+            is_valid = address_validator.is_valid_eth(canonical_string)
+        elif "TXID" in prefix:
+            is_valid = address_validator.is_valid_txid(canonical_string)
+        
+        # 步驟 4: 驗證閘門 (不變)
+        if not is_valid:
+            # 驗證失敗 (例如：這是一個 TXID 碎片)
+            return original_string
+
+        # --- 驗證通過 ---
+        
+        # 步驟 5: [新] 記錄錯誤
+        # 只有在 "驗證通過" 且 "偵測到空格" 時，才記錄錯誤
+        if has_formatting_error:
+            error_record = {
+                "original_text": original_string.replace("\n", "\\n"), # 顯示換行符
+                "corrected_address": canonical_string,
+                "type_detected": prefix,
+                "warning": "偵測到不必要的空格 (space)，已被自動修正。"
+            }
+            # 避免重複記錄
+            if error_record not in self.formatting_errors:
+                self.formatting_errors.append(error_record)
+
+        # 步驟 6: 執行遮罩 (不變)
         map_key = "ADDR_BTC" if "BTC" in prefix else prefix
         current_map = self.mapping_data[map_key]
         
-        # [修改] 使用清理過的 "canonical_string" 作為 Key
         if canonical_string not in current_map:
             new_id = f"[{map_key}_{len(current_map) + 1:03d}]"
             current_map[canonical_string] = new_id
+            
+        # 步驟 7: 回傳遮罩 ID (不變)
         return current_map[canonical_string]
     
     def _process_run(self, run):
@@ -75,8 +115,10 @@ class FileProcessor:
         if not os.path.exists(input_path):
             raise FileNotFoundError(f"找不到輸入檔案: {input_path}")
             
+        # [修改] 重置 mapping 和 錯誤列表
         self.mapping_data = {k: {} for k in self.mapping_data}
-            
+        self.formatting_errors = []
+
         doc = docx.Document(input_path)
         
         # [修改] 替換邏輯：直接處理 Paragraph.text
@@ -113,3 +155,29 @@ class FileProcessor:
             
         print(f"  [FileProcessor] 遮罩完成: {output_path}")
         print(f"  [FileProcessor] Mapping 表已儲存: {mapping_path}")
+
+        # --- [新加入的程式碼] ---
+        # 在儲存前，對錯誤報告進行排序
+        print("  [FileProcessor] 正在排序錯誤報告...")
+        def sort_key(error_record):
+            """
+            定義排序規則：
+            - 地址 (ADDR_TRON, ADDR_BTC 等) 回傳 0
+            - TXID (TXID_GENERIC) 回傳 1
+            """
+            if error_record.get("type_detected") == "TXID_GENERIC":
+                return 1  # TXID 往後排
+            else:
+                return 0  # 地址 (ADDR_*) 往前排
+        
+        self.formatting_errors.sort(key=sort_key)
+        # --- [新加入的程式碼結束] ---
+        
+        error_report_path = os.path.join(os.path.dirname(mapping_path), "formatting_errors.json")
+        with open(error_report_path, 'w', encoding='utf-8') as f:
+            json.dump(self.formatting_errors, f, indent=4, ensure_ascii=False)
+        
+        if self.formatting_errors:
+            print(f"  [FileProcessor] [警告] 偵測到 {len(self.formatting_errors)} 筆格式錯誤，報告已儲存: {error_report_path}")
+        else:
+            print(f"  [FileProcessor] 未偵測到格式錯誤。")
