@@ -12,3 +12,5 @@ MASKED_REPORT_PATH = os.path.join(OUTPUT_DIR, "report-MASKED.docx")
 MAPPING_PATH = os.path.join(OUTPUT_DIR, "mapping.json")
 TRACE_REQUEST_PATH = os.path.join(OUTPUT_DIR, "traceRequestBody.json")
 ADDRESS_REQUEST_PATH = os.path.join(OUTPUT_DIR, "addressCheckRequest.json")
+TXH_CHECK_REQUEST_PATH = os.path.join(OUTPUT_DIR, "txhCheckRequestBody.json")
+
