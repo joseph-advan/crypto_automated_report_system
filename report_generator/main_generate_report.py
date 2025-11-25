@@ -4,6 +4,7 @@
 import config
 import os
 from processing.data_integrator import DataIntegrator
+from processing.data_filter import DataFilter # [新增]
 from services.prompt_manager import PromptManager
 from services.llm_service import LLMService
 
@@ -11,15 +12,15 @@ def main():
     print("[主程式] 1. 載入設定...")
     
     try:
-        # --- [ critical ] 修改 ---
         # 建立服務
-        # 1. 傳入 config.TXH_API_RESPONSE_FILE 而不是 ...TRACE...
         integrator = DataIntegrator(
             mapping_path=config.MAPPING_FILE,
             address_api_path=config.ADDRESS_API_RESPONSE_FILE,
-            txh_api_path=config.TXH_API_RESPONSE_FILE # <--- [修改]
+            txh_api_path=config.TXH_API_RESPONSE_FILE 
         )
-        # --- [修改完畢] ---
+        
+        # [新增] 初始化資料篩選器
+        data_filter = DataFilter()
         
         prompter = PromptManager()
         
@@ -43,8 +44,19 @@ def main():
         print("[主程式] 錯誤：資料整合失敗，請檢查輸入檔案。")
         return
 
-    print(f"[主程式] 3. 成功整合 {len(augmented_data)} 筆實體資料。正在準備 Prompt...")
-    report_prompt_messages = prompter.get_entity_correction_prompt(augmented_data)
+    print(f"[主程式] 3. 成功整合 {len(augmented_data)} 筆實體資料。")
+    
+    # --- [新增] 資料篩選步驟 ---
+    print("[主程式] 3.1 正在篩選異常項目...")
+    filtered_data = data_filter.filter_anomalies(augmented_data)
+    
+    # 儲存篩選後的 Payload (供使用者檢查)
+    payload_path = os.path.join(config.OUTPUT_REPORT_DIR, "filtered_payload.json")
+    data_filter.save_payload(filtered_data, payload_path)
+    # ---------------------------
+
+    print(f"[主程式] 3.2 準備 Prompt (使用 {len(filtered_data)} 筆異常資料)...")
+    report_prompt_messages = prompter.get_entity_correction_prompt(filtered_data)
     
     if not report_prompt_messages:
         print("[主程式] 錯誤：產生 Prompt 失敗，請檢查 Prompt 模板檔案。")

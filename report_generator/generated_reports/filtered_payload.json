@@ -1,0 +1,46 @@
+[
+  {
+    "id": "[TIME_032]",
+    "type": "TIME",
+    "raw_text": "2023-09-20\n16;20:09",
+    "clean_val": "2023-09-20\n16:20:09",
+    "local_validation": {
+      "status": 2,
+      "error_msg": "Invalid time separator ';'"
+    },
+    "api_verification": null
+  },
+  {
+    "id": "[ADDR_106]",
+    "type": "ADDR",
+    "raw_text": "TUs8NRPUWfy41EqRHDew296LyFUxzFom MP",
+    "clean_val": "TUs8NRPUWfy41EqRHDew296LyFUxzFomMP",
+    "local_validation": {
+      "status": 1,
+      "error_msg": "Contains spaces"
+    },
+    "api_verification": null
+  },
+  {
+    "id": "[AMT_068]",
+    "type": "AMT",
+    "raw_text": "104,811 .79",
+    "clean_val": "104811.79",
+    "local_validation": {
+      "status": 1,
+      "error_msg": "Contains spaces"
+    },
+    "api_verification": null
+  },
+  {
+    "id": "[ADDR_235]",
+    "type": "ADDR",
+    "raw_text": "TEPSrSYPDSQ7yXpMFPq91Fb1QEWpMkRGf n\n",
+    "clean_val": "TEPSrSYPDSQ7yXpMFPq91Fb1QEWpMkRGfn",
+    "local_validation": {
+      "status": 1,
+      "error_msg": "Contains spaces"
+    },
+    "api_verification": null
+  }
+]

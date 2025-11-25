@@ -20,7 +20,7 @@ else:
 # --- 3. Together AI 設定 ---
 TOGETHER_API_KEY = os.getenv("TOGETHER_API_KEY")
 TOGETHER_API_URL = "https://api.together.xyz/v1/chat/completions"
-LLM_MODEL_ID = "togethercomputer/Llama-4-Scout-Instruct-17Bx16E" 
+LLM_MODEL_ID = "meta-llama/Llama-4-Scout-17B-16E-Instruct" 
 
 # --- 4. 檔案路徑設定 (輸入) ---
 AUDIT_DATA_DIR = os.path.join(BASE_DIR, "automated_report_system", "data")
@@ -29,7 +29,7 @@ AUDIT_DATA_DIR = os.path.join(BASE_DIR, "automated_report_system", "data")
 MAPPING_FILE = os.path.join(AUDIT_DATA_DIR, "output", "mapping.json")
 
 # (階段二) API 回傳的檔案
-ADDRESS_API_RESPONSE_FILE = os.path.join(AUDIT_DATA_DIR, "api_data", "addressChech200OK.json")
+ADDRESS_API_RESPONSE_FILE = os.path.join(AUDIT_DATA_DIR, "api_data_addr", "addressChech200OK.json")
 
 # --- [ critical ] 修改 ---
 # 1. 變數名稱從 TRACE_ 改為 TXH_ 以符合語意

@@ -33,12 +33,17 @@ def run_audit_process(report_filename):
     with open(config.MAPPING_PATH, 'w', encoding='utf-8') as f:
         json.dump(outputs['mapping'], f, indent=2, ensure_ascii=False)
 
-    # 4. 存檔: Trace Requests (未來金流比對用) (不變)
-    # (我們仍然保留這個檔案，為了你未來的「金流確認」API)
+# 4. 存檔: Trace Requests
     print(f"[存檔] (金流確認) Trace Requests: {config.TRACE_REQUEST_PATH}")
+    
+    # [修正] 將列表包裝在 "queries" 物件中，符合正確檔案結構
+    trace_data_output = {
+        "queries": outputs['trace_requests']
+    }
+    
     with open(config.TRACE_REQUEST_PATH, 'w', encoding='utf-8') as f:
-        json.dump(outputs['trace_requests'], f, indent=2, ensure_ascii=False)
-
+        # 這裡改 dumping trace_data_output
+        json.dump(trace_data_output, f, indent=2, ensure_ascii=False)
     # 5. 存檔: Address Requests (地址實體驗證) (不變)
     print(f"[存檔] (地址確認) Address Requests: {config.ADDRESS_REQUEST_PATH}")
     addr_req_list = [
